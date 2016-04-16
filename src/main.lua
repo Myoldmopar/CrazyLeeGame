@@ -1,17 +1,19 @@
 canShootTimerMax = 0.25
 daxton = { x = 100, y = 80, img = nil, win = false, orig_y = 80, can_shoot = true, canShootTimer = canShootTimerMax }
 gibson = { x = 400, y = 80, img = nil, win = false, orig_y = 80, can_shoot = true, canShootTimer = canShootTimerMax }
+enemy = { x = 100, y = 600, img = nil, visible = true }
 bulletImg = nil
 bullets = {}
 min_y = 80
-enemies = {}
+--enemies = {}
 finish_y = 800
-local enemyclass = require 'enemy'
+--local enemyclass = require 'enemy'
 
 function love.load()
 	daxton.img = love.graphics.newImage('images/daxton.png')
 	gibson.img = love.graphics.newImage('images/gibson.png')
 	bulletImg = love.graphics.newImage('images/reddot.png')
+	enemy.img = love.graphics.newImage('images/enemy.png')
 end
 
 function love.draw()
@@ -31,24 +33,35 @@ function love.draw()
 	for i, bullet in ipairs(bullets) do
 		love.graphics.draw(bullet.img, bullet.x, bullet.y)
 	end
-	for i, enemy in ipairs(enemies) do
+	if enemy.visible then
 		love.graphics.draw(enemy.img, enemy.x, enemy.y)
 	end
 end
 
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+	  return x1 < x2+w2 and
+                 x2 < x1+w1 and
+                 y1 < y2+h2 and
+                 y2 < y1+h1
+end
+
 function love.update(dt)
-	if math.random() > 0.95 then
-		thisenemy = enemyclass:new()
-		table.insert(enemies, thisenemy)
+	if not enemy.visible then
+		if math.random() > 0.98 then
+			enemy.visible = true
+			enemy.x = math.random(100,500)
+		end
+		--this_enemy = enemyclass:new()
+		--table.insert(enemies, thisenemy)
 	end
-	for i, enemy in ipairs(enemies) do
+	--for i, enemy in ipairs(enemies) do
 		--print(enemy)
 		--love.event.push('quit')
-		enemy.y = enemy.y + 10
-		if enemy.y > finish_y then
-			table.remove(enemies, i)
-		end
-	end
+		--enemy.y = enemy.y + 10
+	--	if enemy.y > finish_y then
+	--		table.remove(enemies, i)
+	--	end
+	--end
 	gibson.canShootTimer = gibson.canShootTimer - dt
 	if gibson.canShootTimer < 0 then
  		gibson.canShoot = true
@@ -60,6 +73,11 @@ function love.update(dt)
 	for i, bullet in ipairs(bullets) do
 		bullet.y = bullet.y + (250 * dt)
 		if bullet.y > finish_y then -- remove bullets when they pass off the screen
+			table.remove(bullets, i)
+		end
+		if CheckCollision(bullet.x, bullet.y, bulletImg:getWidth(), bulletImg:getHeight(),
+			          enemy.x, enemy.y, enemy.img:getWidth(), enemy.img:getHeight()) then
+			enemy.visible = false
 			table.remove(bullets, i)
 		end
 	end	
@@ -94,10 +112,18 @@ function love.update(dt)
 		daxton.y = daxton.y + increment 
 	elseif love.keyboard.isDown('a') then
 		daxton.y = daxton.y - increment
+	elseif love.keyboard.isDown('1') then
+		daxton.x = daxton.x - increment
+	elseif love.keyboard.isDown('2') then
+		daxton.x = daxton.x + increment
 	elseif love.keyboard.isDown('m') then
 		gibson.y = gibson.y + increment
 	elseif love.keyboard.isDown('k') then
 		gibson.y = gibson.y - increment
+	elseif love.keyboard.isDown('9') then
+		gibson.x = gibson.x - increment
+	elseif love.keyboard.isDown('0') then
+		gibson.x = gibson.x + increment
 	end
 	winning_y = finish_y - 220
 	gibson.y = math.max( gibson.y, 80 )

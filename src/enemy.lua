@@ -3,7 +3,7 @@ local enemy = {}
 enemyImg = love.graphics.newImage("images/enemy.png")
 
 function enemy:new()
-	return {x = math.random(1, 100), y = math.random(1, 100), angle = math.random(5, 85), img = enemyImg}
+	return {x = math.random(1, 300), y = math.random(1, 600), angle = math.random(5, 85), img = enemyImg}
 end
 
 function enemy:update(dt)

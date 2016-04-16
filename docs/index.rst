@@ -11,8 +11,32 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-1. List Item 1
-   a. Sub Item 1
+Keybindings
+===========
+
+- Moving Dax
+
+  - Up: a
+
+  - Down: z
+
+  - Left: 1
+
+  - Right: 2
+
+  - Fire!: q
+
+- Moving Gibs
+
+  - Up: k
+
+  - Down: m
+
+  - Left: 9
+
+  - Right: 0
+
+  - Fire!: o
 
 Indices and tables
 ==================
