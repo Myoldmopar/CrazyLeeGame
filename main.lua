@@ -1,10 +1,14 @@
-daxton = { x = 100, y = 80, img = nil, win = false, orig_y = 80 }
-gibson = { x = 400, y = 80, img = nil, win = false, orig_y = 80 }
+canShootTimerMax = 0.25
+daxton = { x = 100, y = 80, img = nil, win = false, orig_y = 80, can_shoot = true, canShootTimer = canShootTimerMax }
+gibson = { x = 400, y = 80, img = nil, win = false, orig_y = 80, can_shoot = true, canShootTimer = canShootTimerMax }
+bulletImg = nil
+bullets = {}
 min_y = 80
 
 function love.load()
 	daxton.img = love.graphics.newImage('images/daxton.png')
 	gibson.img = love.graphics.newImage('images/gibson.png')
+	bulletImg = love.graphics.newImage('images/reddot.png')
 end
 
 function love.draw()
@@ -21,9 +25,38 @@ function love.draw()
 	if daxton.win then
 		love.graphics.print("DAXTON WINS - PRESS R", 250, 0, 0, 3)
 	end
+	for i, bullet in ipairs(bullets) do
+		love.graphics.draw(bullet.img, bullet.x, bullet.y)
+	end
 end
 
 function love.update(dt)
+	gibson.canShootTimer = gibson.canShootTimer - dt
+	if gibson.canShootTimer < 0 then
+ 		gibson.canShoot = true
+ 	end
+	daxton.canShootTimer = daxton.canShootTimer - dt
+	if daxton.canShootTimer < 0 then
+		daxton.canShoot = true
+	end
+	for i, bullet in ipairs(bullets) do
+		bullet.y = bullet.y + (250 * dt)
+		if bullet.y > 500 then -- remove bullets when they pass off the screen
+			table.remove(bullets, i)
+		end
+	end	
+	if love.keyboard.isDown('o') and gibson.canShoot then
+ 		newBullet = { x = gibson.x + (gibson.img:getWidth()/2) - (bulletImg:getWidth()/2), y = gibson.y+gibson.img:getHeight(), img = bulletImg }
+		table.insert(bullets, newBullet)
+		gibson.canShoot = false
+		gibson.canShootTimer = canShootTimerMax
+	end
+	if love.keyboard.isDown('q') and daxton.canShoot then
+		newBullet = { x = daxton.x + (daxton.img:getWidth()/2) - (bulletImg:getWidth()/2), y = daxton.y+daxton.img:getHeight(), img = bulletImg }
+		table.insert(bullets, newBullet)
+		daxton.canShoot = false
+		daxton.canShootTimer = canShootTimerMax
+	end
 	increment = 5
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
