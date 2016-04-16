@@ -11,7 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+1. List Item 1
+   a. Sub Item 1
 
 Indices and tables
 ==================
